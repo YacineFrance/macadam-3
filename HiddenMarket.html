@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hidden Market</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-1: #3f4348;
+      --bg-2: #33373c;
+      --bg-3: #292d31;
+      --gold-1: #f2d49b;
+      --gold-2: #cba25d;
+      --gold-3: #8e6a32;
+      --shadow: rgba(0,0,0,0.42);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255,255,255,0.05), transparent 18%),
+        radial-gradient(circle at 80% 22%, rgba(255,255,255,0.04), transparent 16%),
+        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.03), transparent 24%),
+        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 48%, var(--bg-3) 100%);
+      color: white;
+      padding: 24px 0 60px;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(242,212,155,0.11), transparent 62%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: haloMove 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes haloMove {
+      from { transform: translateY(0px) scale(1); }
+      to { transform: translateY(-14px) scale(1.03); }
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+   .ornaments {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.62;
+}
+
+    .ornament {
+      position: absolute;
+      border: 1px solid rgba(242,212,155,0.16);
+      box-shadow: 0 0 20px rgba(242,212,155,0.04);
+    }
+
+    .ring {
+      border-radius: 999px;
+    }
+
+    .stem {
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(242,212,155,0.00), rgba(242,212,155,0.22), rgba(242,212,155,0.00));
+      border: none;
+    }
+
+    .leaf {
+      width: 34px;
+      height: 14px;
+      border-radius: 100% 0 100% 0;
+      border: 1px solid rgba(242,212,155,0.16);
+      transform: rotate(45deg);
+    }
+
+    .leaf.alt {
+      border-radius: 0 100% 0 100%;
+      transform: rotate(-45deg);
+    }
+
+    .verify-wrap {
+      position: relative;
+      z-index: 20;
+      width: min(560px, calc(100vw - 48px));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px auto 18px;
+    }
+
+    .verify-btn {
+      border: 1px solid rgba(126, 165, 149, 0.52);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(126,165,149,0.14));
+      color: #eef7f2;
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.12) inset,
+        0 8px 20px rgba(0,0,0,0.18),
+        0 0 18px rgba(126,165,149,0.10);
+      transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease,
+        background 0.28s ease;
+    }
+
+    .verify-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(155, 198, 180, 0.88);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), rgba(126,165,149,0.22));
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.14) inset,
+        0 12px 28px rgba(0,0,0,0.22),
+        0 0 24px rgba(126,165,149,0.14);
+    }
+
+    .verify-panel {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition:
+        max-height 0.55s ease,
+        opacity 0.35s ease,
+        transform 0.45s ease,
+        padding-top 0.45s ease,
+        padding-bottom 0.45s ease;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .verify-wrap.open .verify-panel,
+    .verify-wrap:hover .verify-panel {
+      max-height: 360px;
+      opacity: 1;
+      transform: translateY(0);
+      padding-top: 14px;
+      padding-bottom: 10px;
+    }
+
+    .verify-copy {
+      padding: 6px 6px 10px;
+    }
+
+   .verify-copy p {
+  margin: 0;
+  color: rgba(255,255,255,0.94);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  line-height: 1.28;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(255,255,255,0.02);
+}
+
+    .verify-form {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0 10px;
+    }
+
+    .verify-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      border-radius: 14px;
+      padding: 13px 15px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .verify-input::placeholder {
+      color: rgba(255,255,255,0.44);
+    }
+
+    .verify-input:focus {
+      border-color: rgba(126,165,149,0.60);
+      box-shadow: 0 0 0 3px rgba(126,165,149,0.10);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .verify-submit {
+      border: 1px solid rgba(126,165,149,0.34);
+      background: rgba(126,165,149,0.14);
+      color: #f3fbf7;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .verify-submit:hover {
+      transform: translateY(-1px);
+      background: rgba(126,165,149,0.20);
+      border-color: rgba(126,165,149,0.62);
+    }
+
+    .verify-error,
+    .verify-success {
+      min-height: 22px;
+      padding: 0 4px 0;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .verify-error {
+      color: #ffd9d9;
+    }
+
+    .verify-success {
+      color: #eef7f2;
+    }
+
+    .viewer {
+      position: relative;
+      width: 320px;
+      height: 420px;
+      z-index: 2;
+      margin-top: 90px;
+      transition: transform 0.45s ease;
+    }
+
+    .verify-wrap.open + .viewer,
+    .verify-wrap:hover + .viewer {
+      transform: translateY(10px);
+    }
+
+    .viewer::before {
+      content: "";
+      position: absolute;
+      inset: -34px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(242,212,155,0.10), transparent 62%);
+      filter: blur(22px);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .viewer::after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: 28px;
+      border: 1px solid rgba(242,212,155,0.14);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      overflow: hidden;
+      transition:
+        opacity 0.45s ease,
+        transform 0.40s ease,
+        box-shadow 0.40s ease;
+      background: rgba(255,255,255,0.03);
+      box-shadow:
+        0 24px 56px var(--shadow),
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 0 0 2px rgba(203,162,93,0.50),
+        0 0 24px rgba(242,212,155,0.09);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      padding: 1px;
+      background: linear-gradient(
+        140deg,
+        rgba(242,212,155,0.95),
+        rgba(203,162,93,0.78),
+        rgba(142,106,50,0.88)
+      );
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          120deg,
+          rgba(255,255,255,0.00) 0%,
+          rgba(255,255,255,0.00) 38%,
+          rgba(255,245,225,0.15) 50%,
+          rgba(255,255,255,0.00) 62%,
+          rgba(255,255,255,0.00) 100%
+        );
+      transform: translateX(-130%);
+      transition: transform 0.9s ease;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-4px) scale(1.022);
+      box-shadow:
+        0 30px 74px rgba(0,0,0,0.50),
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 0 0 2px rgba(242,212,155,0.58),
+        0 0 28px rgba(242,212,155,0.12);
+    }
+
+    .card:hover::after {
+      transform: translateX(120%);
+    }
+
+    .card img {
+      position: absolute;
+      top: -8%;
+      left: 0;
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      user-select: none;
+      z-index: 10;
+      opacity: 0.96;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .left { left: -64px; }
+    .right { right: -64px; }
+
+    .arrow:hover {
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .arrow .core {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(242,212,155,0.55);
+      background: radial-gradient(circle at 35% 35%, rgba(255,248,235,0.20), rgba(203,162,93,0.16));
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.24) inset,
+        0 0 14px rgba(242,212,155,0.10);
+      backdrop-filter: blur(4px);
+    }
+
+    .glyph {
+      display: none;
+    }
+
+    .arrow.spin-left {
+      animation: spinLeft 0.26s ease;
+    }
+
+    .arrow.spin-right {
+      animation: spinRight 0.26s ease;
+    }
+
+    @keyframes spinLeft {
+      0%   { transform: translateY(-50%) rotate(0deg) scale(1); }
+      55%  { transform: translateY(-50%) rotate(-14deg) scale(1.06); }
+      100% { transform: translateY(-50%) rotate(0deg) scale(1); }
+    }
+
+    @keyframes spinRight {
+      0%   { transform: translateY(-50%) rotate(0deg) scale(1); }
+      55%  { transform: translateY(-50%) rotate(14deg) scale(1.06); }
+      100% { transform: translateY(-50%) rotate(0deg) scale(1); }
+    }
+
+    .ring-burst {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(242,212,155,0.70);
+      box-shadow:
+        0 0 14px rgba(242,212,155,0.18),
+        0 0 20px rgba(203,162,93,0.16);
+      pointer-events: none;
+      animation: ringBurst 0.62s ease-out forwards;
+      z-index: 9;
+    }
+
+    @keyframes ringBurst {
+      0% {
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2.8);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .verify-wrap {
+        top: 20px;
+        width: min(92vw, 560px);
+      }
+
+      .verify-copy p {
+        font-size: 20px;
+      }
+
+      .verify-form {
+        flex-direction: column;
+      }
+
+      .verify-submit {
+        padding: 12px 16px;
+      }
+
+      .viewer {
+        width: 280px;
+        height: 368px;
+      }
+
+      .left { left: -54px; }
+      .right { right: -54px; }
+
+      .arrow {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .legal-buttons {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+
+   .rgpd-btn {
+  border: 1px solid rgba(242,212,155,0.45);
+  background: rgba(20,20,20,0.38);
+  color: rgba(255,255,255,0.88);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  transition: transform 0.22s ease, opacity 0.22s ease, border-color 0.22s ease;
+}
+
+.rgpd-btn:hover {
+  transform: scale(1.06);
+  border-color: rgba(242,212,155,0.72);
+}
+
+.brand {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 50;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.rgpd-btn:hover {
+  transform: scale(1.06);
+  border-color: rgba(242,212,155,0.72);
+}
+
+.rgpd-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,0.26);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+
+
+.rgpd-panel.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rgpd-box {
+  position: relative;
+  width: min(720px, calc(100vw - 28px));
+  margin-bottom: 18px;
+  border-radius: 22px;
+  padding: 22px 22px 18px;
+  background: rgba(36, 33, 29, 0.84);
+  border: 1px solid rgba(242,212,155,0.20);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.32);
+  transform: translateY(20px);
+  transition: transform 0.28s ease;
+}
+
+.rgpd-panel.open .rgpd-box {
+  transform: translateY(0);
+}
+
+.rgpd-box h3 {
+  margin: 0 0 10px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.96);
+}
+
+.rgpd-box p {
+  margin: 0 0 12px;
+  color: rgba(255,255,255,0.84);
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.rgpd-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.72);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+
+<body>
+    <div class="brand">macadam-3</div>
+  <div class="page">
+   <div class="ornaments">
+  <div class="ornament ring" style="width:150px;height:150px;top:8%;left:6%;"></div>
+  <div class="ornament ring" style="width:86px;height:86px;top:17%;left:12%;"></div>
+
+  <div class="ornament ring" style="width:170px;height:170px;bottom:8%;right:6%;"></div>
+  <div class="ornament ring" style="width:100px;height:100px;bottom:17%;right:11%;"></div>
+
+  <div class="ornament stem" style="width:2px;height:190px;top:18%;left:18%;"></div>
+  <div class="ornament stem" style="width:170px;height:2px;top:27%;left:18%;"></div>
+
+  <div class="ornament stem" style="width:2px;height:190px;bottom:14%;right:20%;"></div>
+  <div class="ornament stem" style="width:170px;height:2px;bottom:23%;right:20%;"></div>
+
+  <div class="ornament stem" style="width:140px;height:2px;top:62%;left:8%;transform:rotate(26deg);"></div>
+  <div class="ornament stem" style="width:145px;height:2px;top:18%;right:10%;transform:rotate(-24deg);"></div>
+
+  <div class="ornament leaf" style="top:23%;left:16%;"></div>
+  <div class="ornament leaf alt" style="top:31%;left:21%;"></div>
+
+  <div class="ornament leaf" style="bottom:31%;right:18%;"></div>
+  <div class="ornament leaf alt" style="bottom:22%;right:15%;"></div>
+
+  <div class="ornament leaf" style="top:68%;left:14%;"></div>
+  <div class="ornament leaf alt" style="top:12%;right:16%;"></div>
+</div>
+
+    <div class="verify-wrap" id="verifyWrap">
+      <button class="verify-btn" id="verifyBtn" type="button">
+        Vérifiez votre carte
+      </button>
+
+      <section class="verify-panel" id="verifyPanel">
+        <div class="verify-copy">
+          <p>
+            Chaque carte possède une identité unique, connue uniquement du détenteur et du créateur.
+            Aucun registre public n’existe. La vérification d’authenticité s’effectue exclusivement
+            par mon contrôle direct, à partir du code confidentiel associé à votre carte.
+          </p>
+        </div>
+
+        <form class="verify-form" id="verifyForm">
+          <input
+            type="text"
+            id="cardCode"
+            class="verify-input"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="Entrez votre code à 10 chiffres"
+            autocomplete="off"
+          />
+          <button type="submit" class="verify-submit">Envoyer</button>
+        </form>
+
+        <p class="verify-error" id="verifyError"></p>
+        <p class="verify-success" id="verifySuccess"></p>
+      </section>
+    </div>
+
+    <div class="viewer">
+  <div class="card" id="card0"><img src="Soleau/Carte 1 copie.png" alt="Carte 1"></div>
+<div class="card hidden" id="card1"><img src="Soleau/Carte 2 copie.png" alt="Carte 2"></div>
+<div class="card hidden" id="card2"><img src="Soleau/Carte 3 copie.png" alt="Carte 3"></div>
+<div class="card hidden" id="card3"><img src="Soleau/Carte 4 copie.png" alt="Carte 4"></div>
+<div class="card hidden" id="card4"><img src="Soleau/Carte 5 copie.png" alt="Carte 5"></div>
+<div class="card hidden" id="card5"><img src="Soleau/Carte 6 copie.png" alt="Carte 6"></div>
+<div class="card hidden" id="card6"><img src="Soleau/Carte 7 copie.png" alt="Carte 7"></div>
+<div class="card hidden" id="card7"><img src="Soleau/Carte 8 copie.png" alt="Carte 8"></div>
+<div class="card hidden" id="card8"><img src="Soleau/Carte 9 copie.png" alt="Carte 9"></div>
+<div class="card hidden" id="card9"><img src="Soleau/Carte 10 copie.png" alt="Carte 10"></div>
+
+      <div class="arrow left" onclick="prev(event)">
+        <div class="core"></div>
+      </div>
+
+      <div class="arrow right" onclick="next(event)">
+        <div class="core"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let current = 0;
+    const total = 10;
+
+    function show(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        card.classList.toggle('hidden', i !== index);
+      });
+    }
+
+    function burstAt(el) {
+      const rect = el.getBoundingClientRect();
+      const burst = document.createElement('div');
+      burst.className = 'ring-burst';
+      burst.style.left = (rect.left + rect.width / 2) + 'px';
+      burst.style.top = (rect.top + rect.height / 2) + 'px';
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 620);
+    }
+
+    function spinArrow(el, cls) {
+      el.classList.remove('spin-left', 'spin-right');
+      void el.offsetWidth;
+      el.classList.add(cls);
+      setTimeout(() => el.classList.remove(cls), 260);
+    }
+
+    function next(e) {
+      if (e?.currentTarget) {
+        spinArrow(e.currentTarget, 'spin-right');
+        burstAt(e.currentTarget);
+      }
+      current = (current + 1) % total;
+      show(current);
+    }
+
+    function prev(e) {
+      if (e?.currentTarget) {
+        spinArrow(e.currentTarget, 'spin-left');
+        burstAt(e.currentTarget);
+      }
+      current = (current - 1 + total) % total;
+      show(current);
+    }
+
+    const verifyWrap = document.getElementById('verifyWrap');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const verifyForm = document.getElementById('verifyForm');
+    const cardCode = document.getElementById('cardCode');
+    const verifyError = document.getElementById('verifyError');
+    const verifySuccess = document.getElementById('verifySuccess');
+
+    verifyWrap.addEventListener('mouseenter', () => {
+      verifyWrap.classList.add('open');
+    });
+
+    verifyWrap.addEventListener('mouseleave', () => {
+      verifyWrap.classList.remove('open');
+    });
+
+    verifyBtn.addEventListener('click', () => {
+      verifyWrap.classList.toggle('open');
+    });
+
+    cardCode.addEventListener('input', () => {
+      cardCode.value = cardCode.value.replace(/\D/g, '').slice(0, 10);
+      verifyError.textContent = '';
+      verifySuccess.textContent = '';
+    });
+
+    verifyForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const code = cardCode.value.trim();
+
+      verifyError.textContent = '';
+      verifySuccess.textContent = '';
+
+      if (!/^\d{10}$/.test(code)) {
+        verifyError.textContent = 'Veuillez entrer un code de 10 chiffres exactement.';
+        return;
+      }
+
+      const subject = encodeURIComponent('Demande de vérification de carte');
+      const body = encodeURIComponent(
+        `Bonjour,\n\nJe souhaite vérifier l’authenticité de ma carte.\n\nCode : ${code}\n\nMerci.`
+      );
+
+      window.location.href = `mailto:flovofrance@gmail.com?subject=${subject}&body=${body}`;
+
+      verifySuccess.textContent = 'Ouverture de votre client mail...';
+    });
+    
+  </script>
+
+ <div class="legal-buttons">
+  <button class="rgpd-btn" id="rgpdBtn" type="button">RGPD</button>
+  <button class="rgpd-btn" id="legalBtn" type="button">Mentions</button>
+</div>
+
+<div class="rgpd-panel" id="legalPanel" aria-hidden="true">
+  <div class="rgpd-box">
+    <button class="rgpd-close" id="legalClose" type="button">×</button>
+
+    <h3>Mentions légales</h3>
+
+    <p>
+      Éditeur du site : Yacine<br>
+      Projet : macadam-3<br>
+      Contact : flovofrance@gmail.com<br>
+      Localisation : France
+    </p>
+
+    <p>
+      Ce site est édité à titre indépendant dans le cadre d’un projet artistique
+      et de collection. Les cartes présentées sont des œuvres originales.
+    </p>
+
+    <p>
+      Aucune garantie de valeur ou de rendement n’est associée aux cartes.
+      Elles sont proposées comme objets de collection.
+    </p>
+  </div>
+</div>
+
+
+
+<div class="rgpd-panel" id="rgpdPanel" aria-hidden="true">
+  <div class="rgpd-box">
+    <button class="rgpd-close" id="rgpdClose" type="button">×</button>
+    <h3>Information RGPD</h3>
+    <p>
+      L’adresse email utilisée dans le cadre de la vérification d’une carte est collectée uniquement
+      pour traiter votre demande d’authenticité et vous répondre. Elle n’est pas utilisée à des fins
+      commerciales, de prospection ou de revente.
+    </p>
+    <p>
+      Responsable du traitement : Yacine / The Hidden Market.<br>
+      Finalité : gestion des demandes de vérification d’authenticité.<br>
+      Base légale : intérêt légitime à assurer le suivi et la vérification des cartes.<br>
+      Destinataire : uniquement le créateur du projet.<br>
+      Conservation : pendant la durée strictement nécessaire au traitement de la demande, puis suppression.
+    </p>
+    <p>
+      Vous pouvez demander l’accès, la rectification ou l’effacement de vos données en écrivant à :
+      <strong>flovofrance@gmail.com</strong>.
+    </p>
+  </div>
+</div>
+<script>
+  const rgpdBtn = document.getElementById('rgpdBtn');
+  const rgpdPanel = document.getElementById('rgpdPanel');
+  const rgpdClose = document.getElementById('rgpdClose');
+
+  rgpdBtn.addEventListener('click', () => {
+    rgpdPanel.classList.add('open');
+    rgpdPanel.setAttribute('aria-hidden', 'false');
+  });
+
+  
+
+  rgpdClose.addEventListener('click', () => {
+    rgpdPanel.classList.remove('open');
+    rgpdPanel.setAttribute('aria-hidden', 'true');
+  });
+
+  rgpdPanel.addEventListener('click', (e) => {
+    if (e.target === rgpdPanel) {
+      rgpdPanel.classList.remove('open');
+      rgpdPanel.setAttribute('aria-hidden', 'true');
+    }
+  });
+</script>
+
+<script>
+  const legalBtn = document.getElementById('legalBtn');
+  const legalPanel = document.getElementById('legalPanel');
+  const legalClose = document.getElementById('legalClose');
+
+  legalBtn.addEventListener('click', () => {
+    legalPanel.classList.add('open');
+    legalPanel.setAttribute('aria-hidden', 'false');
+  });
+
+  legalClose.addEventListener('click', () => {
+    legalPanel.classList.remove('open');
+    legalPanel.setAttribute('aria-hidden', 'true');
+  });
+
+  legalPanel.addEventListener('click', (e) => {
+    if (e.target === legalPanel) {
+      legalPanel.classList.remove('open');
+      legalPanel.setAttribute('aria-hidden', 'true');
+    }
+  });
+</script>
+</body>
+
+</html>
